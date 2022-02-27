@@ -100,7 +100,7 @@ class SimulationCombiner(object):
                                  line_dash=line_dash,
                                  color=next(baseline_accuracy_colors))
                     legend.append((f"{name} accuracy when trained with all data: {baseline_accuracy * 100:0.1f}%", [r]))
-                agents: Dict[str, Agent] = dict()
+                agents: Dict[str, Agent] = {}
                 for agent in data['agents']:
                     agent = Agent(**agent)
                     agents[agent.address] = agent
@@ -119,10 +119,7 @@ class SimulationCombiner(object):
                         (balance_data['t'], balance_data['b'] * 100 / agents[agent].start_balance))
                 for agent_id, balance_data in sorted(agent_balance_data.items(), key=itemgetter(0)):
                     agent = agents[agent_id]
-                    if agent.good:
-                        color = next(good_colors)
-                    else:
-                        color = next(bad_colors)
+                    color = next(good_colors) if agent.good else next(bad_colors)
                     l = plot.line(x=list(map(itemgetter(0), balance_data)),
                                   y=list(map(itemgetter(1), balance_data)),
                                   line_dash=line_dash,
@@ -163,7 +160,7 @@ if __name__ == '__main__':
             perceptron=path / 'saved_runs/1580940494-news-perceptron-simulation_data.json',
         ),
     )
-    for dataset in paths.keys():
+    for dataset in paths:
         s.combine([
             dict(name="NB",
                  path=paths[dataset]['nb']

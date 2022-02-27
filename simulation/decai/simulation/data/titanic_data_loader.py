@@ -55,15 +55,12 @@ class TitanicDataLoader(DataLoader):
         def _get_title(row):
             result = None
             name = row['Name']
-            for index, titles in enumerate(title_tuples):
+            for titles in title_tuples:
                 for t in titles:
                     if t in name:
                         result = titles[0]
             if result == ' Dr. ':
-                if row['Sex'] == 'male':
-                    result = ' Mr. '
-                else:
-                    result = ' Mrs. '
+                result = ' Mr. ' if row['Sex'] == 'male' else ' Mrs. '
             assert result is not None, f"No title found in {row}."
             result = title_to_num[result]
             return result

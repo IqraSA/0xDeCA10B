@@ -73,8 +73,7 @@ class Stakeable(IncentiveMechanism):
         result = self.cost_weight * 60 / int(math.sqrt(time_since_last_update_s))
         result = int(result)
         # Make sure there is a minimum cost to adding data.
-        if result < 1:
-            result = 1
+        result = max(result, 1)
         return result
 
     def handle_add_data(self, contributor_address: Address, msg_value: float, data, classification) -> (float, bool):

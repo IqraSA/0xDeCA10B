@@ -98,7 +98,7 @@ class Simulator(object):
             message = "Could not save picture of the plot."
             try:
                 # Check if in WSL.
-                show_error_details = not ('microsoft' in uname().release.lower())
+                show_error_details = 'microsoft' not in uname().release.lower()
             except:
                 pass
             if show_error_details:

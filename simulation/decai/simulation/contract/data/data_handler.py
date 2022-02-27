@@ -45,11 +45,7 @@ class DataHandler(SmartContract):
         return iter(self._added_data.items())
 
     def _get_key(self, data, classification, added_time: int, original_author: Address):
-        if isinstance(data, np.ndarray):
-            # The `.tolist()` isn't necessary but is faster.
-            data = tuple(data.tolist())
-        else:
-            data = tuple(data)
+        data = tuple(data.tolist()) if isinstance(data, np.ndarray) else tuple(data)
         return (data, classification, added_time, original_author)
 
     def get_data(self, data, classification, added_time: int, original_author: Address) -> StoredData:
@@ -61,8 +57,7 @@ class DataHandler(SmartContract):
         :return: The stored information for the data.
         """
         key = self._get_key(data, classification, added_time, original_author)
-        result = self._added_data.get(key)
-        return result
+        return self._added_data.get(key)
 
     def handle_add_data(self, contributor_address: Address, cost, data, classification):
         """

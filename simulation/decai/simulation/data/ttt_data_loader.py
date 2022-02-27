@@ -80,17 +80,7 @@ class TicTacToeDataLoader(DataLoader):
                     path.append((board, pos, next_player))
                     break
 
-            if winner is not None:
-                # Only count wins for one of the players to make setting up games simpler.
-                if winner == players[0]:
-                    for history_board, history_position, history_player in path:
-                        history_board = history_board.flatten()
-                        if history_player == winner:
-                            X.append(history_board)
-                            y.append(history_position)
-                        else:
-                            bad_moves.add((tuple(-history_board.flatten()), -history_position))
-            else:
+            if winner is None:
                 # Recurse.
                 for pos in range(start_pos, self.width * self.length):
                     i, j = self.map_pos(pos)
@@ -101,6 +91,15 @@ class TicTacToeDataLoader(DataLoader):
                     _board = board.copy()
                     _board[i, j] = next_player
                     fill(_board, start_pos, next_player=-1 if next_player == 1 else 1, path=_path)
+
+            elif winner == players[0]:
+                for history_board, history_position, history_player in path:
+                    history_board = history_board.flatten()
+                    if history_player == winner:
+                        X.append(history_board)
+                        y.append(history_position)
+                    else:
+                        bad_moves.add((tuple(-history_board.flatten()), -history_position))
 
         self._logger.info("Loading Tic Tac Toe data.")
 

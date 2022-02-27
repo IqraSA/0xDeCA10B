@@ -133,11 +133,10 @@ class SciKitClassifier(Classifier):
                 'smoothingFactor': self._model.alpha,
             }
         elif isinstance(self._model, NearestCentroidClassifier):
-            if feature_index_mapping is not None:
-                if model_type is None:
-                    model_type = 'sparse nearest centroid classifier'
+            if feature_index_mapping is not None and model_type is None:
+                model_type = 'sparse nearest centroid classifier'
 
-            centroids = dict()
+            centroids = {}
             if classifications is None:
                 classifications = list(map(str, range(len(self.centroids_))))
             for i, classification in enumerate(classifications):

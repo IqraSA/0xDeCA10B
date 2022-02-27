@@ -57,9 +57,7 @@ class _SignalMediaDataLoader(DataLoader):
         :param sources: Source domain names.
         :return: The source domain name from `sources` or `None` if no mapping can be found.
         """
-        # TODO
-        result = None
-        return result
+        return None
 
     def load_data(self, train_size: int = None, test_size: int = None) -> (tuple, tuple):
         data_folder_path = os.path.join(__file__, '../../../../training_data/news')
@@ -188,17 +186,14 @@ class NewsDataLoader(DataLoader):
         result = doc.text
         for ent in doc.ents[::-1]:
             if ent.label_ in self._entity_types_to_replace:
-                result = result[:ent.start_char] + "<" + ent.label_ + ">" + result[ent.end_char:]
+                result = f'{result[:ent.start_char]}<{ent.label_}>{result[ent.end_char:]}'
         return result
 
     def _pre_process_text(self, doc) -> str:
-        # TODO Remove name of news sources.
         if self._replace_entities_enabled:
-            result = self._replace_entities(doc)
-        else:
-            assert isinstance(doc, str)
-            result = doc
-        return result
+            return self._replace_entities(doc)
+        assert isinstance(doc, str)
+        return doc
 
     def _pre_process(self, news_articles: Collection[News], train_size: int, test_size: int) -> \
             Tuple[Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray]]:
@@ -242,8 +237,7 @@ class NewsDataLoader(DataLoader):
         self._logger.info("Done getting features.")
         return (x_train, y_train), (x_test, y_test)
 
-    def load_data(self, train_size: int = None, test_size: int = None) -> \
-            Tuple[Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray]]:
+    def load_data(self, train_size: int = None, test_size: int = None) -> Tuple[Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray]]:
         self._logger.info("Loading news data.")
         data_folder_path = os.path.join(__file__, '../../../../training_data/news')
 
@@ -258,15 +252,16 @@ class NewsDataLoader(DataLoader):
             'y_test': base_path / f'y_test-{file_identifier}'
         }
         # Use if modified in the last day.
-        if all([p.exists() for p in cache_paths.values()]) and \
-                all([time.time() - p.stat().st_mtime < 60 * 60 * 24 for p in cache_paths.values()]):
+        if all(p.exists() for p in cache_paths.values()) and all(
+            time.time() - p.stat().st_mtime < 60 * 60 * 24
+            for p in cache_paths.values()
+        ):
             self._logger.info("Loaded cached News data from %s.", cache_paths)
             return (np.load(cache_paths['x_train']), np.load(cache_paths['y_train'])), \
                    (np.load(cache_paths['x_test']), np.load(cache_paths['y_test']))
 
         data = self._load_kaggle_data(data_folder_path)
 
-        #  Separate train and test data.
         if train_size is None:
             if test_size is None:
                 train_size = int(self._train_split * len(data))

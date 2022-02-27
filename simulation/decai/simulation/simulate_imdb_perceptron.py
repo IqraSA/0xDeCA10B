@@ -16,10 +16,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 num_words = 1000
 train_size: Optional[int] = None
-if train_size is None:
-    init_train_data_portion = 0.08
-else:
-    init_train_data_portion = 100 / train_size
+init_train_data_portion = 0.08 if train_size is None else 100 / train_size
 
 
 def main():

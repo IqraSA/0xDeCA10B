@@ -22,10 +22,7 @@ class SimpleDataLoader(DataLoader):
 
     def load_data(self, train_size: int = None, test_size: int = None) -> (tuple, tuple):
         def _ground_truth(data):
-            if data[0] * data[2] > 0:
-                return 1
-            else:
-                return 0
+            return 1 if data[0] * data[2] > 0 else 0
 
         x_train = np.array([
             [0, 0, 0],

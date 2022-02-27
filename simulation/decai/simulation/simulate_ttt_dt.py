@@ -133,11 +133,7 @@ def evaluate_on_self(classifier, tic_tac_toe):
     print("Evaluating by playing against itself.")
 
     def _run_game(board, next_player):
-        if next_player == -1:
-            # Flip the board since the bot always thinks it is 1.
-            board_for_prediction = -board
-        else:
-            board_for_prediction = board
+        board_for_prediction = -board if next_player == -1 else board
         pos = classifier.predict(board_for_prediction.flatten())
         pos = _map_pos(tic_tac_toe, board, pos)
         if board[pos] != 0:
